@@ -179,3 +179,4 @@ function setLanguage(lang) {
     refreshCurrentView();
   }
 }
+
