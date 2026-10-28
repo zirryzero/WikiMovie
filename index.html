@@ -32,18 +32,25 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ms-auto my-2 my-lg-0">
+        <ul class="navbar-nav ms-auto my-2 my-lg-0 align-items-lg-center">
           <li class="nav-item">
-            <a class="nav-link" href="#about">Acerca</a>
+            <a class="nav-link" href="#about" data-i18n="navAbout">Acerca</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#buscar">Buscar</a>
+            <a class="nav-link" href="#buscar" data-i18n="navSearch">Buscar</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#populares">Populares</a>
+            <a class="nav-link" href="#populares" data-i18n="navPopular">Populares</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#contact">Contacto</a>
+            <a class="nav-link" href="#contact" data-i18n="navContact">Contacto</a>
+          </li>
+          <!-- Language Selector -->
+          <li class="nav-item ms-lg-3 my-2 my-lg-0">
+            <div class="lang-switch-group">
+              <button type="button" id="lang-btn-es" class="lang-switch-btn active" onclick="setLanguage('es')">ES</button>
+              <button type="button" id="lang-btn-en" class="lang-switch-btn" onclick="setLanguage('en')">EN</button>
+            </div>
           </li>
         </ul>
       </div>
@@ -55,16 +62,20 @@
     <div class="container px-4 px-lg-5 h-100">
       <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
         <div class="col-lg-8 align-self-end">
-          <h1 class="text-white font-weight-bold">WikiMovie</h1>
+          <h1 class="text-white font-weight-bold" data-i18n="heroTitle">WikiMovie</h1>
           <hr class="divider" />
         </div>
         <div class="col-lg-8 align-self-baseline">
-          <p class="text-white-75 mb-5 fs-5">
+          <p class="text-white-75 mb-5 fs-5" data-i18n="heroSubtitle">
             Tu sitio favorito para descubrir, explorar y conocer todo sobre las películas del momento y los clásicos del cine.
           </p>
           <div class="d-flex justify-content-center gap-3">
-            <a class="btn btn-primary btn-xl" href="#buscar"><i class="bi bi-search me-2"></i>Buscar Película</a>
-            <a class="btn btn-outline-light btn-xl" href="#populares"><i class="bi bi-fire me-2"></i>Ver Populares</a>
+            <a class="btn btn-primary btn-xl" href="#buscar">
+              <i class="bi bi-search me-2"></i><span data-i18n="btnSearchHero">Buscar Película</span>
+            </a>
+            <a class="btn btn-outline-light btn-xl" href="#populares">
+              <i class="bi bi-fire me-2"></i><span data-i18n="btnPopularHero">Ver Populares</span>
+            </a>
           </div>
         </div>
       </div>
@@ -82,15 +93,15 @@
             </a>
           </h2>
           <hr class="divider divider-light" />
-          <p class="text-white-75 mb-4 lead">
+          <p class="text-white-75 mb-4 lead" data-i18n="aboutRole">
             Desarrollador de Software apasionado por crear experiencias web modernas, interactivas y eficientes.
           </p>
-          <p class="text-white-75 mb-4">
+          <p class="text-white-75 mb-4" data-i18n="aboutDesc">
             <strong>WikiMovie</strong> es una aplicación web interactiva que consume la API en tiempo real de
             <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="text-white fw-bold">The Movie Database (TMDb)</a>
             para consultar catálogos actualizados, puntuaciones, sinopsis oficiales y detalles de producción cinematográfica.
           </p>
-          <a class="btn btn-light btn-xl" href="#populares">¡Explorar Películas!</a>
+          <a class="btn btn-light btn-xl" href="#populares" data-i18n="btnExplore">¡Explorar Películas!</a>
         </div>
       </div>
     </div>
@@ -100,15 +111,15 @@
   <section class="page-section bg-light" id="buscar">
     <div class="container px-4 px-lg-5">
       <div class="text-center mb-4">
-        <h2 class="mt-0 fw-bold">Busca Tu Película Favorita</h2>
+        <h2 class="mt-0 fw-bold" data-i18n="searchTitle">Busca Tu Película Favorita</h2>
         <hr class="divider" />
-        <p class="text-muted">Escribe el título de cualquier película y presiona Enter o Buscar</p>
+        <p class="text-muted" data-i18n="searchSubtitle">Escribe el título de cualquier película y presiona Enter o Buscar</p>
       </div>
       <div class="search-wrapper">
         <div class="input-group">
-          <input id="search-input" type="search" class="form-control search-input" placeholder="Ej. Inception, Avatar, Avengers..." aria-label="Buscar película" />
+          <input id="search-input" type="search" class="form-control search-input" placeholder="Ej. Inception, Avatar, Avengers..." aria-label="Buscar película" data-i18n-placeholder="searchPlaceholder" />
           <button id="search-button" type="button" class="btn btn-primary search-button">
-            <i class="bi bi-search me-1"></i> Buscar
+            <i class="bi bi-search me-1"></i> <span data-i18n="btnSearch">Buscar</span>
           </button>
         </div>
       </div>
@@ -119,7 +130,7 @@
   <section class="page-section" id="populares">
     <div class="container-fluid px-lg-5">
       <div class="text-center mb-5">
-        <h2 class="mt-0 fw-bold">Catálogo de Películas</h2>
+        <h2 class="mt-0 fw-bold" data-i18n="catalogTitle">Catálogo de Películas</h2>
         <hr class="divider" />
       </div>
       <div class="row g-3" id="categorias">
@@ -132,7 +143,7 @@
       <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title fw-bold" id="ModalLabel">Detalle de Película</h5>
+            <h5 class="modal-title fw-bold" id="ModalLabel" data-i18n="modalDefaultTitle">Detalle de Película</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body movie-modal-body" id="modal-body">
@@ -140,7 +151,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
-              <i class="bi bi-x-lg me-1"></i> Cerrar
+              <i class="bi bi-x-lg me-1"></i> <span data-i18n="btnClose">Cerrar</span>
             </button>
           </div>
         </div>
@@ -153,9 +164,9 @@
     <div class="container px-4 px-lg-5">
       <div class="row gx-4 gx-lg-5 justify-content-center">
         <div class="col-lg-8 col-xl-6 text-center">
-          <h2 class="mt-0 fw-bold">¡Mantengámonos en contacto!</h2>
+          <h2 class="mt-0 fw-bold" data-i18n="contactTitle">¡Mantengámonos en contacto!</h2>
           <hr class="divider" />
-          <p class="text-muted mb-5">
+          <p class="text-muted mb-5" data-i18n="contactSubtitle">
             ¿Tienes alguna consulta o propuesta de proyecto? No dudes en contactarme a través de mis canales profesionales.
           </p>
         </div>
@@ -182,7 +193,7 @@
   <!-- Footer-->
   <footer class="bg-dark py-4 text-white">
     <div class="container px-4 px-lg-5">
-      <div class="small text-center text-white-50">
+      <div class="small text-center text-white-50" data-i18n="footerRights">
         Copyright &copy; 2024 - <a href="https://www.linkedin.com/in/harold-david-perez-ortega-857955121/" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-underline">Harold Pérez</a>. Datos y multimedia provistos por <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="text-white-50">TMDb</a>.
       </div>
     </div>
@@ -190,11 +201,10 @@
 
   <!-- Bootstrap core JS-->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Main theme JS & API logic -->
+  <!-- Main theme JS, i18n & API logic -->
   <script src="js/scripts.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
 </body>
-
-</html>
 
 </html>

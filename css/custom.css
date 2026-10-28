@@ -224,3 +224,44 @@
   width: 100%;
 }
 
+
+/* Language Switcher */
+.lang-switch-group {
+  display: inline-flex;
+  border-radius: 50rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.lang-switch-btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 50rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lang-switch-btn.active {
+  background-color: var(--bs-orange);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#mainNav.navbar-shrink .lang-switch-group {
+  background-color: #f1f3f5;
+  border-color: #dee2e6;
+}
+
+#mainNav.navbar-shrink .lang-switch-btn {
+  color: #495057;
+}
+
+#mainNav.navbar-shrink .lang-switch-btn.active {
+  background-color: var(--bs-orange);
+  color: #fff;
+}

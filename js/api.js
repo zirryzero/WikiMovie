@@ -1,4 +1,4 @@
-// WikiMovie API Integration
+// WikiMovie API Integration with Multilingual Support
 const API_KEY = localStorage.getItem("tmdb_api_key") || "6b3c0f9f9da72b488abe9a4fa55a9199";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMG_BASE_URL = "https://image.tmdb.org/t/p";
@@ -8,8 +8,16 @@ let currentQuery = "";
 let currentPage = 1;
 let currentMode = "popular"; // "popular" o "search"
 
+function getApiLang() {
+  return typeof currentLang !== "undefined" && currentLang === "en" ? "en-US" : "es-ES";
+}
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
+  if (typeof updatePageLanguage === "function") {
+    updatePageLanguage();
+  }
+
   loadPopularMovies(1);
 
   const searchButton = document.getElementById("search-button");
@@ -29,6 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function refreshCurrentView() {
+  if (currentMode === "search" && currentQuery) {
+    searchMovies(currentQuery, currentPage);
+  } else {
+    loadPopularMovies(currentPage);
+  }
+}
+
 function handleSearch() {
   const searchInput = document.getElementById("search-input");
   const query = searchInput.value.trim();
@@ -46,12 +62,13 @@ function handleSearch() {
 function showLoading() {
   const container = document.getElementById("categorias");
   if (container) {
+    const loadingMsg = typeof getT === "function" ? getT("loadingText") : "Cargando películas...";
     container.innerHTML = `
       <div class="col-12 loading-spinner-wrapper my-5">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-          <span class="visually-hidden">Cargando...</span>
+          <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Cargando películas...</p>
+        <p class="mt-3 text-muted">${loadingMsg}</p>
       </div>`;
   }
 }
@@ -62,7 +79,7 @@ function loadPopularMovies(page = 1) {
   currentPage = page;
   currentMode = "popular";
 
-  fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=es-ES&page=${page}`)
+  fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=${getApiLang()}&page=${page}`)
     .then((response) => {
       if (!response.ok) throw new Error("Error en la solicitud");
       return response.json();
@@ -72,7 +89,8 @@ function loadPopularMovies(page = 1) {
     })
     .catch((error) => {
       console.error("Error al cargar populares:", error);
-      showErrorMessage("No se pudieron cargar las películas. Verifica tu conexión o clave de API.");
+      const errMsg = typeof getT === "function" ? getT("errorLoading") : "No se pudieron cargar las películas.";
+      showErrorMessage(errMsg);
     });
 }
 
@@ -84,7 +102,7 @@ function searchMovies(text = "", page = 1) {
   currentMode = "search";
 
   fetch(
-    `${BASE_URL}/search/movie?api_key=${API_KEY}&language=es-ES&query=${encodeURIComponent(
+    `${BASE_URL}/search/movie?api_key=${API_KEY}&language=${getApiLang()}&query=${encodeURIComponent(
       text
     )}&page=${page}&include_adult=false`
   )
@@ -97,7 +115,8 @@ function searchMovies(text = "", page = 1) {
     })
     .catch((error) => {
       console.error("Error al buscar películas:", error);
-      showErrorMessage("Ocurrió un error al realizar la búsqueda.");
+      const errMsg = typeof getT === "function" ? getT("errorSearch") : "Ocurrió un error al realizar la búsqueda.";
+      showErrorMessage(errMsg);
     });
 }
 
@@ -105,11 +124,12 @@ function searchMovies(text = "", page = 1) {
 function showErrorMessage(message) {
   const container = document.getElementById("categorias");
   if (container) {
+    const btnText = typeof getT === "function" ? getT("btnRetry") : "Volver a Populares";
     container.innerHTML = `
       <div class="col-12 text-center my-5">
         <i class="bi bi-exclamation-triangle text-warning display-4"></i>
         <h4 class="mt-3">${message}</h4>
-        <button class="btn btn-outline-primary mt-3" onclick="loadPopularMovies(1)">Volver a Populares</button>
+        <button class="btn btn-outline-primary mt-3" onclick="loadPopularMovies(1)">${btnText}</button>
       </div>`;
   }
 }
@@ -120,12 +140,16 @@ function renderMovieList(movies, page, totalPages, query = "") {
   if (!container) return;
 
   if (!movies || movies.length === 0) {
+    const title = typeof getT === "function" ? getT("noResultsTitle") : "No se encontraron películas";
+    const desc = typeof getT === "function" ? getT("noResultsDesc") : "Intenta buscar con otro término.";
+    const btnText = typeof getT === "function" ? getT("btnBackPopular") : "Ver Populares";
+
     container.innerHTML = `
       <div class="col-12 text-center my-5">
         <i class="bi bi-film text-muted display-4"></i>
-        <h3 class="mt-3">No se encontraron películas</h3>
-        <p class="text-muted">Intenta buscar con otro término o explorar las populares.</p>
-        <button class="btn btn-primary mt-2" onclick="loadPopularMovies(1)">Ver Populares</button>
+        <h3 class="mt-3">${title}</h3>
+        <p class="text-muted">${desc}</p>
+        <button class="btn btn-primary mt-2" onclick="loadPopularMovies(1)">${btnText}</button>
       </div>`;
     return;
   }
@@ -177,20 +201,26 @@ function renderMovieList(movies, page, totalPages, query = "") {
         : `loadPopularMovies(${page + 1})`
       : "";
 
+  const btnPrevText = typeof getT === "function" ? getT("btnPrev") : "Anterior";
+  const btnNextText = typeof getT === "function" ? getT("btnNext") : "Siguiente";
+  const pageIndicator = typeof getT === "function"
+    ? getT("pageIndicator").replace("{current}", page).replace("{total}", totalPages)
+    : `Página ${page} de ${totalPages}`;
+
   html += `
     <div class="col-12 pagination-wrapper">
       <ul class="pagination shadow-sm">
         <li class="page-item ${prevDisabled}">
-          <button class="page-link" ${prevDisabled ? "disabled" : ""} onclick="${prevAction}" aria-label="Anterior">
-            <i class="bi bi-chevron-left me-1"></i> Anterior
+          <button class="page-link" ${prevDisabled ? "disabled" : ""} onclick="${prevAction}" aria-label="${btnPrevText}">
+            <i class="bi bi-chevron-left me-1"></i> ${btnPrevText}
           </button>
         </li>
         <li class="page-item disabled d-none d-sm-block">
-          <span class="page-link text-dark bg-white">Página ${page} de ${totalPages}</span>
+          <span class="page-link text-dark bg-white">${pageIndicator}</span>
         </li>
         <li class="page-item ${nextDisabled}">
-          <button class="page-link" ${nextDisabled ? "disabled" : ""} onclick="${nextAction}" aria-label="Siguiente">
-            Siguiente <i class="bi bi-chevron-right ms-1"></i>
+          <button class="page-link" ${nextDisabled ? "disabled" : ""} onclick="${nextAction}" aria-label="${btnNextText}">
+            ${btnNextText} <i class="bi bi-chevron-right ms-1"></i>
           </button>
         </li>
       </ul>
@@ -210,22 +240,23 @@ function setData(id) {
 
   if (!modalLabel || !modalBody) return;
 
-  modalLabel.textContent = "Cargando detalles...";
+  const loadingTitle = typeof getT === "function" ? getT("modalLoading") : "Cargando detalles...";
+  modalLabel.textContent = loadingTitle;
   modalBody.innerHTML = `
     <div class="loading-spinner-wrapper my-5 text-center">
       <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Cargando...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
-      <p class="mt-3 text-muted">Obteniendo información de la película...</p>
+      <p class="mt-3 text-muted">${loadingTitle}</p>
     </div>`;
 
-  fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=es-ES`)
+  fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=${getApiLang()}`)
     .then((response) => {
       if (!response.ok) throw new Error("Error al obtener la película");
       return response.json();
     })
     .then((movie) => {
-      modalLabel.textContent = movie.title || "Detalle de Película";
+      modalLabel.textContent = movie.title || (typeof getT === "function" ? getT("modalDefaultTitle") : "Detalle de Película");
 
       const poster = movie.poster_path
         ? `${IMG_BASE_URL}/w500${movie.poster_path}`
@@ -239,16 +270,26 @@ function setData(id) {
         .map((g) => `<span class="movie-genre-badge">${g.name}</span>`)
         .join("");
 
+      const notSpecText = typeof getT === "function" ? getT("modalNotSpecified") : "No especificado";
       const companies = (movie.production_companies || [])
         .map((c) => c.name)
-        .join(", ") || "No especificado";
+        .join(", ") || notSpecText;
 
       const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
-      const votes = movie.vote_count ? `(${movie.vote_count.toLocaleString()} votos)` : "";
-      const runtime = movie.runtime ? `${movie.runtime} min` : "Desconocida";
-      const releaseDate = movie.release_date || "No disponible";
-      const overview = movie.overview || "No hay sinopsis disponible en español para esta película.";
+      const votesWord = typeof getT === "function" ? getT("modalVotes") : "votos";
+      const votes = movie.vote_count ? `(${movie.vote_count.toLocaleString()} ${votesWord})` : "";
+      
+      const minutesWord = typeof getT === "function" ? getT("modalMinutes") : "min";
+      const runtime = movie.runtime ? `${movie.runtime} ${minutesWord}` : notSpecText;
+      const releaseDate = movie.release_date || notSpecText;
+      const noOverviewText = typeof getT === "function" ? getT("modalNoOverview") : "No hay sinopsis disponible.";
+      const overview = movie.overview || noOverviewText;
       const tagline = movie.tagline ? `<p class="movie-tagline">"${movie.tagline}"</p>` : "";
+
+      const releaseLabel = typeof getT === "function" ? getT("modalRelease") : "Estreno";
+      const runtimeLabel = typeof getT === "function" ? getT("modalRuntime") : "Duración";
+      const synopsisLabel = typeof getT === "function" ? getT("modalSynopsis") : "Sinopsis";
+      const producersLabel = typeof getT === "function" ? getT("modalProducers") : "Productoras";
 
       let backdropHtml = "";
       if (backdrop) {
@@ -272,30 +313,32 @@ function setData(id) {
             </div>
 
             <div class="movie-metadata">
-              <span><i class="bi bi-calendar3 me-1 text-primary"></i> Estreno: <strong>${releaseDate}</strong></span>
-              <span><i class="bi bi-clock me-1 text-primary"></i> Duración: <strong>${runtime}</strong></span>
+              <span><i class="bi bi-calendar3 me-1 text-primary"></i> ${releaseLabel}: <strong>${releaseDate}</strong></span>
+              <span><i class="bi bi-clock me-1 text-primary"></i> ${runtimeLabel}: <strong>${runtime}</strong></span>
             </div>
 
             <div class="movie-genres-list">
               ${genresHtml}
             </div>
 
-            <h5 class="mt-4 mb-2"><i class="bi bi-card-text me-2 text-primary"></i>Sinopsis</h5>
+            <h5 class="mt-4 mb-2"><i class="bi bi-card-text me-2 text-primary"></i>${synopsisLabel}</h5>
             <p class="movie-overview">${overview}</p>
 
             <div class="mt-4 text-muted small">
-              <strong><i class="bi bi-building me-1"></i>Productoras:</strong> ${companies}
+              <strong><i class="bi bi-building me-1"></i>${producersLabel}:</strong> ${companies}
             </div>
           </div>
         </div>`;
     })
     .catch((error) => {
       console.error("Error al cargar detalles:", error);
+      const errTitle = typeof getT === "function" ? getT("modalError") : "No se pudo cargar la información";
+      const errDesc = typeof getT === "function" ? getT("modalErrorDesc") : "Por favor, inténtalo de nuevo más tarde.";
       modalBody.innerHTML = `
         <div class="text-center my-5">
           <i class="bi bi-exclamation-circle text-danger display-4"></i>
-          <h4 class="mt-3">No se pudo cargar la información de la película</h4>
-          <p class="text-muted">Por favor, inténtalo de nuevo más tarde.</p>
+          <h4 class="mt-3">${errTitle}</h4>
+          <p class="text-muted">${errDesc}</p>
         </div>`;
     });
 }
