@@ -59,7 +59,7 @@ Este proyecto ya cuenta con el flujo automatizado en `.github/workflows/static.y
 ## 👨‍💻 Autor
 
 Desarrollado por **Harold David Pérez Ortega**  
-- 💼 [LinkedIn](https://www.linkedin.com/in/harold-perez-ortega-857955121/)
+- 💼 [LinkedIn](https://www.linkedin.com/in/harold-david-perez-ortega-857955121/)
 - 🐙 [GitHub](https://github.com/zirryzero)
 
 ---
@@ -67,3 +67,4 @@ Desarrollado por **Harold David Pérez Ortega**
 ## 📄 Licencia
 
 Este proyecto es de código abierto bajo la licencia MIT.
+
