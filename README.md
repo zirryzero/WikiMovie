@@ -2,6 +2,8 @@
 
 Aplicación web interactiva para descubrir y buscar películas populares en tiempo real utilizando la API de **[The Movie Database (TMDb)](https://www.themoviedb.org/)**.
 
+[🇬🇧 Read English version](README.en.md)
+
 ![WikiMovie Preview](assets/img/bg-masthead.jpg)
 
 ---
